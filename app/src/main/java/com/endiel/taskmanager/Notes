@@ -1,0 +1,247 @@
+TASK MANAGER APP PLAN (GENERAL APP PLAN WITH MVVM STRUCTURE)
+
+            STEP 1
+* Define the app in simple language
+    What does the app actually do
+        1. Add task
+        2. See task
+        3. Mark task as done
+        4. Delete task
+
+            STEP 2
+Break it down into tasks (These are the MVP(Minimal Viable Product))
+    1. Task Creation
+        * Input field
+        * Button to save
+
+    2. Task List
+        * Show all task
+        * Scrollable list
+
+    3. Task Completion
+        * Checkbox / toggle
+        * Mark task as done/undone
+
+    4. Task Deletion
+        * Remove task from list
+
+            STEP 3
+Break tasks into tiny tasks(This is where overwhelm disappears)
+
+FEATURE: Task List
+Break into:
+    * Create screen layout
+    * Add list component
+    * Show dummy data
+
+FEATURE: Add Task
+    * Create text input
+    * Create button
+    * Capture text value
+    * Add item to list
+
+FEATURE: Completion
+    * Add check box UI
+    * Toggle state
+
+FEATURE: Delete
+    * Add delete button/icon
+    * Remove item from list
+
+            STEP 4
+Define data
+Before coding decide what a task is
+Keep it simple
+    * Title(String)
+    * IsCompleted(Boolean)
+Optional later
+    * Description
+    * Date
+
+            STEP 5
+Define screens
+Here we need
+    * Home Screen
+        * Shows list of tasks
+        * Has button to add task
+
+    * Add task screren (or dialog)
+        * Input field
+        * Save button
+
+            STEP 6
+Define user flow
+Think like a user:
+    1. Open app
+    2. See tasks
+    3. Tap "Add"
+    4. Enter task
+    5. Save
+    6. See it in list
+    7. Mark complete or delete
+
+            STEP 7
+Define build order
+Don't build randomly, build in order
+    1. Show empty UI
+    2. Show fake tasks
+    3. Add new task(in memory)
+    4. Toggle completion
+    5. Delete task
+    6. Save to database
+
+First move (No coding yet)
+    * Show list
+    * Add task
+    * Toggle task
+    * Delete task
+
+            TURN THE ABOVE IDEA INTO MVVM BLUEPRINT
+Model(data) - What the app stores
+viewModel - Manages the logic and state
+UI(View) - Displays data and sends users actions
+    * UI never talk directly to data
+    * Everything flows through viewModel first
+
+        MODEL LAYER(Data)
+What data do we have:
+    A Task
+    Fields:
+        * id
+        * title
+        * isCompleted
+This is our core model
+
+* Where does data live?
+    * Local database(Room)
+    * In memory(List) - For early stages
+
+* Responsibilities of model layer
+    * Store tasks
+    * Retrieve tasks
+    * Update tasks
+    * Delete tasks
+
+        VIEW MODEL(Brain of the app)
+* What does it hold
+    * List of task (state)
+    * UI state (loading, empty, etc)
+
+* What actions does viewModel handle
+    These comes from the UI
+        * addTask(title)
+        * toggleTask(Task)
+        * deleteTask(Task)
+        * loadTask(Later when using DB)
+
+* What viewModel does internally
+    * Updates task list
+    * Communicates with repository(later)
+    * Exposes state to UI
+
+        UI(Compose Screens)
+* Screens I need
+    * Home screen
+        Displays:
+            * List of tasks
+            * Button to add task
+        User Actions:
+            * Tap task -> toggle complete
+            * Tap delete -> remove task
+            * Tap add -> go to add screen
+    * Add screen
+        Display:
+            * Text Field
+            * Save button
+        User Actions:
+            * Enter title -> save task
+
+UI responsibilities
+    * Observe task list from viewModel
+    * Display tasks
+    * Send user actions to viewModel
+
+UI does not(store data, handle business logic)
+
+        DATA FLOW
+How everything connects
+    * User Action (UI)
+    * View Model (handles logic)
+    * Repository (Data source later)
+    * View Model update state
+    * UI recomposes automatically
+
+        REPOSITORY LAYER
+Why needed
+    * Acts as a single source of truth
+    * Connects:
+        * Room database
+        * API(if added later)
+
+Responsibilities:
+    * getTasks()
+    * insertTasks()
+    * updateTasks()
+    * deleteTasks()
+
+                    FINAL PROJECT STRUCTURE
+com.yourapp.taskmanager
+
+data/
+    model/
+        Task.kt
+    repository/
+        TaskRepository.kt
+    local/
+        TaskDao.kt
+        AppDatabase.kt
+
+ui/
+    home/
+        HomeScreen.kt
+        HomeScreenViewModel.kt(Optional) - But it's cleaner this way (Then remove the viewModel Folder)
+    addTask/
+        AddTaskScreen.kt
+        AddTaskScreenViewModel.kt(Optional) - But it's cleaner this way (Then remove the viewModel Folder)
+    components/
+        TaskItem.kt
+        TaskItemViewModel.kt(Optional) - But it's cleaner this way (Then remove the viewModel Folder)
+
+viewModel/ (Not necessary to stay here, you can move it closer to the UI)
+    TaskViewModel.kt
+
+di(optional)
+
+                    BUILD FLOW
+Follow this order when coding
+    * Step 1 ->
+        Show fake tasks
+    * Step 2 ->
+        Add viewModel (Manage list in memory)
+    * Step 3 ->
+        Connect UI <-> ViewModel
+    * Step 4 ->
+        Add interactions
+            * Add
+            * Toggle
+            * Delete
+    * Step 5 ->
+        Introduce Room + Repository
+
+* Think of the app like this
+    * UI - What user sees
+    * ViewModel - What app thinks
+    * Model - What app remembers
+
+* Remember to move your viewModel closer to your UI(optional)
+* Don't over engineer early
+    Right now you don't need
+        repository/
+        local
+        di/
+    Start with
+        data/model/
+        ui/
+    Then add complexity later
+
+Use only one viewModel, don't split too early, then add more when needed
