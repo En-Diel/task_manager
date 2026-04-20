@@ -23,8 +23,17 @@ class AddTaskViewModel : ViewModel() {
     private val _tasks = MutableStateFlow<List<Task>>(emptyList()) /* Means I have a
     containter that holds a list of Tasks, starts empty and will notify the UI whenever it changes*/
     val tasks = _tasks.asStateFlow()
+
     fun addTask(title: String) {
         val newTask = Task(id = (_tasks.value.size + 1), title = title)
         _tasks.value = _tasks.value + newTask
+    }
+
+    fun toggleTask(task: Task) {
+        _tasks.value = _tasks.value.map {
+            if (it.id == task.id) {
+                it.copy(isCompleted = !it.isCompleted)
+            } else it
+        }
     }
 }

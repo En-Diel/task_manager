@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.endiel.taskmanager.ui.components.AddTaskDialog
 import com.endiel.taskmanager.ui.components.AddTaskViewModel
+import com.endiel.taskmanager.ui.components.TaskItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +36,15 @@ fun HomeScreen(modifier: Modifier) {
     // This is to hold and remember the value for the FAB
     var showDialog by remember { mutableStateOf(false) }
     val viewModel: AddTaskViewModel = viewModel()
+
+    /**
+     * This is a StateFlow(a stream of data over time)
+     * "Whenever tasks change, I emit a new list"
+     * collectAsState = Converts StateFlow to Compose State(coz compose only understands States
+     * not Flow directly)
+     */
     val tasks by viewModel.tasks.collectAsState()
+    var checked by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -61,7 +71,7 @@ fun HomeScreen(modifier: Modifier) {
         // Main content
         LazyColumn(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
             items(tasks) { task ->
-                Text(text = task.title, modifier = Modifier.padding(16.dp))
+                TaskItem(task = task, onToggle = { viewModel.toggleTask(it) })
             }
         }
         // SHOW THE TASK DIALOG

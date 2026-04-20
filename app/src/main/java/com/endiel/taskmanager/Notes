@@ -245,3 +245,12 @@ Follow this order when coding
     Then add complexity later
 
 Use only one viewModel, don't split too early, then add more when needed
+
+        THE APP FLOW
+
+        User adds task
+        → ViewModel updates _tasks
+        → StateFlow emits new list
+        → collectAsState receives it
+        → Compose recomposes
+        → UI shows new task
