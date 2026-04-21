@@ -36,4 +36,9 @@ class AddTaskViewModel : ViewModel() {
             } else it
         }
     }
+
+    // This keeps all the items except the one we want to delete
+    fun deleteTask(task: Task) {
+        _tasks.value = _tasks.value.filter { it.id != task.id }
+    }
 }

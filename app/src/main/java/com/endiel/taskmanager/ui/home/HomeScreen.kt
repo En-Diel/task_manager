@@ -71,7 +71,11 @@ fun HomeScreen(modifier: Modifier) {
         // Main content
         LazyColumn(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
             items(tasks) { task ->
-                TaskItem(task = task, onToggle = { viewModel.toggleTask(it) })
+                TaskItem(
+                    task = task,
+                    onToggle = { viewModel.toggleTask(it) },
+                    onDelete = { viewModel.deleteTask(task) }
+                )
             }
         }
         // SHOW THE TASK DIALOG
