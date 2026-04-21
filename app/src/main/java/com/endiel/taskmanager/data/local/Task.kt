@@ -1,7 +1,12 @@
 package com.endiel.taskmanager.data.local
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "tasks")
 data class Task (
-    val id: Int,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
     val title: String,
     val isCompleted: Boolean = false
 )

@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.androidx.room)
 }
 
 android {
@@ -58,4 +60,10 @@ dependencies {
 
     // Standard Compose ViewModel integration
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx) // For Coroutines support
+    // KSP for code generation (Replaces kapt)
+    ksp(libs.androidx.room.compiler)
+    // Optional: Configure Room to export schemas for migrations
+    room { schemaDirectory("$projectDir/schemas") }
 }
