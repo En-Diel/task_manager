@@ -11,14 +11,15 @@ import kotlinx.coroutines.flow.Flow
 interface TaskDao {
 
     @Query("SELECT * FROM tasks")
+    // This is ok, it has no suspend coz flow handels async updates
     fun getAllTasks(): Flow<List<Task>>
 
     @Insert
-    fun insertTask(task: Task)
+    suspend fun insertTask(task: Task)
 
     @Delete
-    fun deleteTask(task: Task)
+    suspend fun deleteTask(task: Task)
 
     @Update
-    fun updateTask(task: Task)
+    suspend fun updateTask(task: Task)
 }

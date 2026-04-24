@@ -23,19 +23,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.endiel.taskmanager.data.local.TaskDataBase
 import com.endiel.taskmanager.ui.components.AddTaskDialog
 import com.endiel.taskmanager.ui.components.AddTaskViewModel
+import com.endiel.taskmanager.ui.components.AddTaskViewModelFactory
 import com.endiel.taskmanager.ui.components.TaskItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(modifier: Modifier) {
     // This is to hold and remember the value for the FAB
+    val context = LocalContext.current
+    val db = TaskDataBase.getDatabase(context)
+    val dao = db.taskDao()
     var showDialog by remember { mutableStateOf(false) }
-    val viewModel: AddTaskViewModel = viewModel()
+    val viewModel: AddTaskViewModel = viewModel(factory = AddTaskViewModelFactory(dao))
 
     /**
      * This is a StateFlow(a stream of data over time)
@@ -43,7 +49,7 @@ fun HomeScreen(modifier: Modifier) {
      * collectAsState = Converts StateFlow to Compose State(coz compose only understands States
      * not Flow directly)
      */
-    val tasks by viewModel.tasks.collectAsState()
+    val tasks by viewModel.task.collectAsState()
     var checked by remember { mutableStateOf(false) }
 
     Scaffold(

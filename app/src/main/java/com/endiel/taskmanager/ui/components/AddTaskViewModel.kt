@@ -1,11 +1,17 @@
 package com.endiel.taskmanager.ui.components
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.endiel.taskmanager.data.local.Task
+import com.endiel.taskmanager.data.local.TaskDao
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class AddTaskViewModel : ViewModel() {
+class AddTaskViewModel(private val dao: TaskDao) : ViewModel() {
+    /*
     /**
      * List<Task> = I'm storing a list of Task objects eg. [Task("Study"), Task("Build app)]
      * StateFlow = Holds data and notifies UI when data changes
@@ -40,5 +46,25 @@ class AddTaskViewModel : ViewModel() {
     // This keeps all the items except the one we want to delete
     fun deleteTask(task: Task) {
         _tasks.value = _tasks.value.filter { it.id != task.id }
+    }
+     */
+    val task = dao.getAllTasks().stateIn(
+        viewModelScope, SharingStarted.WhileSubscribed(5000),
+        emptyList()
+    )
+    fun addTask(title: String) {
+        viewModelScope.launch {
+            dao.insertTask(Task(title = title))
+        }
+    }
+    fun deleteTask(task: Task) {
+        viewModelScope.launch {
+            dao.deleteTask(task)
+        }
+    }
+    fun toggleTask(task: Task) {
+        viewModelScope.launch {
+            dao.updateTask(task.copy(isCompleted = !task.isCompleted))
+        }
     }
 }
